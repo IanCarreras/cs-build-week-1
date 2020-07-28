@@ -1,11 +1,12 @@
 import React from 'react';
+import GameOfLife from './GameOfLife'
 import './App.css';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-      </header>
+      <h1>Game of Life</h1>
+      <GameOfLife />
     </div>
   );
 }
