@@ -20,6 +20,6 @@ Cellular automaton simulations have been used in biological and chemical areas o
 
 Rules for the Game of Life
 
-1.  If a cell is alive and has 2 or 3 neighbors, then it remains alive. Else it dies.
-2.  If the cell is dead and has exactly 3 neighbors, then it comes to life. Else it remains dead.
+    - If a cell is alive and has 2 or 3 neighbors, then it remains alive. Else it dies.
+    - If the cell is dead and has exactly 3 neighbors, then it comes to life. Else it remains dead.
 
