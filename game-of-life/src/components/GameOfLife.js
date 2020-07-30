@@ -4,8 +4,8 @@ import './GameOfLife.css'
 
 const GameOfLife = () => {
     const [size, setSize] = useState(20)
-    const [rows, setRows] = useState(10)
-    const [cols, setCols] = useState(10)
+    const [rows, setRows] = useState(5)
+    const [cols, setCols] = useState(5)
     const [grid, setGrid] = useState([])
     const [running, setRunning] = useState(false)
     
@@ -21,8 +21,20 @@ const GameOfLife = () => {
         [-1,-1]
     ] 
 
-    const calculateNeighbors = () => {
-
+    const calculateNeighbors = (board, x, y) => {
+        let neighbors = 0
+        possibleNeighbors.forEach(dir => {
+            const nY = dir[0] + y
+            const nX = dir[1] + x
+            if (nX >= 0 && nX < cols && nY >=0 && nY < rows && board[nY][nX]) {
+                console.log(nX, nY)
+                console.log(cells[nX][nY])
+                neighbors += cells[nX][nY]
+                console.log('neighbors: ', neighbors)
+            }
+        })
+        console.log('neighbors: ', neighbors)
+        return neighbors
     }
 
     const setCells = (x, y, status) => {
@@ -39,12 +51,14 @@ const GameOfLife = () => {
     }
 
     const runSimulation = () => {
+        console.log('running: ', running)
         if (running) {
             setRunning(false)
             return 
         } else if (!running) {
             setRunning(true)
-
+            calculateNeighbors()
+            return
         }
     }
     
@@ -59,7 +73,7 @@ const GameOfLife = () => {
             rows={rows}
             cols={cols}
             setCells={setCells}
-            running={running}
+            // running={running}
         />
         <div className='controls'>
             <button onClick={() => runSimulation()}>{running ? 'stop' : 'start'}</button>

@@ -5,9 +5,10 @@ const Cell = ({value, x, y, setCells, running}) => {
     const [status, setStatus] = useState(value)
 
     const toggle = () => {
-        if(running){
-            return
-        }
+        // console.log(running)
+        // if(running){
+        //     return
+        // }
         if (status == 0){
             setStatus(1)
             return setCells(x, y, 1)

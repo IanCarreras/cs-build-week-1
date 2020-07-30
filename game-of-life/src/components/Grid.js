@@ -27,7 +27,7 @@ const Grid = ({grid, cellSize, rows, cols, setCells, running}) => {
                                     setCells={setCells}
                                     x={i}
                                     y={j}
-                                    running={running}
+                                    // running={running}
                                 />
                             })
                         }
