@@ -1,15 +1,27 @@
 import React, {useState} from 'react'
 import './Cell.css'
 
-const Cell = (props) => {
-    const [status, setStatus] = useState('dead')
+const Cell = ({value, x, y, setCells, running}) => {
+    const [status, setStatus] = useState(value)
 
     const toggle = () => {
-        
+        if(running){
+            return
+        }
+        if (status == 0){
+            setStatus(1)
+            return setCells(x, y, 1)
+        } else {
+            setStatus(0)
+            return setCells(x, y, 0)
+        }
     }
 
     return (
-        <div className='cell'></div>
+        <div 
+            className='cell' 
+            onClick={() => toggle()}
+            style={{ backgroundColor: status == 0 ? 'white' : 'black' }}></div>
     )
 }
 

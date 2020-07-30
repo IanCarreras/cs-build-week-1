@@ -2,7 +2,7 @@ import React from 'react'
 import Cell from './Cell'
 import './Grid.css'
 
-const Grid = ({grid, cellSize, rows, cols}) => {
+const Grid = ({grid, cellSize, rows, cols, setCells, running}) => {
     const width = cols*cellSize
     const height = rows*cellSize
     const styleObj = {
@@ -11,6 +11,7 @@ const Grid = ({grid, cellSize, rows, cols}) => {
         margin: '0 auto',
         border: '1px solid black'
     }
+
     return <div className='grid'
         style={styleObj}
     >
@@ -22,6 +23,11 @@ const Grid = ({grid, cellSize, rows, cols}) => {
                             row.map((col, j) => {
                                 return <Cell 
                                     key={`${i}-${j}`}
+                                    value={grid[i][j]}
+                                    setCells={setCells}
+                                    x={i}
+                                    y={j}
+                                    running={running}
                                 />
                             })
                         }
