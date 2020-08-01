@@ -7,8 +7,8 @@ const GameOfLife = () => {
     const [rows, setRows] = useState(5)
     const [cols, setCols] = useState(5)
     const [running, setRunning] = useState(false)
-    
-    const [cells, setCells] = useState([])
+    const [generation, setGeneration] = useState(0)
+    const [run, setRun] = useState(false)
     const possibleNeighbors = [
         [0,1],
         [0,-1],
@@ -61,43 +61,55 @@ const GameOfLife = () => {
         return neighbors
     }
 
-    const start = () => {
-        
+    const toggleRunning = () => {
+        if (running){
+            setRunning(false)
+            setRun(false)
+        } else {
+            setRunning(true)
+            runSimulation()
+        }
     }
     
-    const runSimulation = () => {
-        console.log('start cells: ', cells)
-        if (running) {
-            setRunning(false)
-            return 
-        } else if (!running) {
+    useEffect(() => {
+        let run = true
+
+        const changeRun = () => {
+            if (run){
+                run = false
+            } else {
+                run = true
+            }
+        }
+        
+        setRun(changeRun)
+
+        if (run){
+            const runSimulation = () => {
             const tempGrid = createGrid()
-            setRunning(true)
             for (let i=0; i<rows; i++){
                 for (let j=0; j<cols; j++){
                     let neighbors = calculateNeighbors(grid, i, j)
-                    console.log('\n')
                     if (neighbors < 2 || neighbors > 3){
-                        console.log(`grid[${i}][${j}]: `, tempGrid[i][j])
-                        console.log('neighbors: ', neighbors)
                         tempGrid[i][j] = 0 
-                        console.log(tempGrid)
                     } else if (grid[i][j] === 0 && neighbors === 3){
-                        console.log(`grid[${i}][${j}]: `, tempGrid[i][j])
-                        console.log('neighbors: ', neighbors)
                         tempGrid[i][j] = 1
-                        console.log(tempGrid)
                     } else if (grid[i][j] === 1 && neighbors === 3 || grid[i][j] === 1 && neighbors === 2){
                         tempGrid[i][j] = 1
                     }
                 }
             }
-            console.log('after cells: ', tempGrid)
             setGrid(tempGrid)
-            return
+            console.log(running)
+            if (running){
+                setTimeout(() => {
+                    runSimulation()
+                }, 1000)
+            }
         }
     }
-    
+}, [running])
+
     useEffect(() => {
         console.log('use effect: ', grid)
     }, [grid])
@@ -112,7 +124,7 @@ const GameOfLife = () => {
             running={running}
         />
         <div className='controls'>
-            <button onClick={() => runSimulation()}>{running ? 'stop' : 'start'}</button>
+            <button onClick={() => toggleRunning()}>{running ? 'stop' : 'start'}</button>
         </div>
     </div>
 }
