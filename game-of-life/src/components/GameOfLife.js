@@ -20,26 +20,22 @@ const GameOfLife = () => {
         [-1,-1]
     ] 
 
-    const calculateNeighbors = (board, x, y) => {
-        let neighbors = 0
-        possibleNeighbors.forEach(dir => {
-            const nX = dir[0] + x
-            const nY = dir[1] + y
-            if (nX >= 0 && nX < cols && nY >=0 && nY < rows && board[nX][nY]) {
-                neighbors ++
+    const createGrid = () => {
+        const board = []
+        for (let i = 0; i < rows; i++) {
+            board[i] = []
+            for (let j = 0; j < cols; j++) {
+                board[i][j] = 0
             }
-        })
-        console.log(`board[${x}][${y}]`,board[x][y])
-        console.log(neighbors)
-        return neighbors
+        }
+        return board
     }
-
+    
+    const [grid, setGrid] = useState(createGrid())
+    
     const updateCells = (x, y) => {
-        console.log(`x: ${x}, y: ${y}`)
-        console.log(grid[x][y])
         const newGrid = grid.map((row, i) => {
             if (i === x) {
-                console.log(grid[x])
                 return row.map((col, j) => {
                     if (j === y) {
                         return col === 0 ? 1 : 0
@@ -51,42 +47,53 @@ const GameOfLife = () => {
                 return row
             }
         })
-        console.log(newGrid)
         setGrid(() => newGrid)
     }
-
-    const createGrid = () => {
-        const board = []
-        for (let i = 0; i < rows; i++) {
-            board[i] = []
-            for (let j = 0; j < cols; j++) {
-                board[i][j] = 0
+    const calculateNeighbors = (board, x, y) => {
+        let neighbors = 0
+        possibleNeighbors.forEach(dir => {
+            const nX = dir[0] + x
+            const nY = dir[1] + y
+            if (nX >= 0 && nX < cols && nY >=0 && nY < rows && board[nX][nY]) {
+                neighbors ++
             }
-        }
-        return board
+        })
+        return neighbors
     }
 
-    const [grid, setGrid] = useState(createGrid())
-
+    const start = () => {
+        
+    }
+    
     const runSimulation = () => {
         console.log('start cells: ', cells)
         if (running) {
             setRunning(false)
             return 
         } else if (!running) {
+            const tempGrid = createGrid()
             setRunning(true)
             for (let i=0; i<rows; i++){
                 for (let j=0; j<cols; j++){
-                    let neighbors = calculateNeighbors(cells, i, j)
+                    let neighbors = calculateNeighbors(grid, i, j)
+                    console.log('\n')
                     if (neighbors < 2 || neighbors > 3){
-                        cells[i][j] = 0 
-                    } else if (cells[i][j] === 0 && neighbors === 3){
-                        cells[i][j] = 1
+                        console.log(`grid[${i}][${j}]: `, tempGrid[i][j])
+                        console.log('neighbors: ', neighbors)
+                        tempGrid[i][j] = 0 
+                        console.log(tempGrid)
+                    } else if (grid[i][j] === 0 && neighbors === 3){
+                        console.log(`grid[${i}][${j}]: `, tempGrid[i][j])
+                        console.log('neighbors: ', neighbors)
+                        tempGrid[i][j] = 1
+                        console.log(tempGrid)
+                    } else if (grid[i][j] === 1 && neighbors === 3 || grid[i][j] === 1 && neighbors === 2){
+                        tempGrid[i][j] = 1
                     }
                 }
             }
-            console.log('after cells: ', cells)
-            setGrid(cells)
+            console.log('after cells: ', tempGrid)
+            setGrid(tempGrid)
             return
         }
     }
@@ -109,7 +116,6 @@ const GameOfLife = () => {
         </div>
     </div>
 }
-
 
 
 export default GameOfLife

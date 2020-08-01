@@ -4,7 +4,6 @@ import './Grid.css'
 
 const Grid = ({grid, cellSize, rows, cols, updateCells, running}) => {
     const width = cols*cellSize
-    const height = rows*cellSize
     const styleObj = {
         width: width, 
         margin: '0 auto',
