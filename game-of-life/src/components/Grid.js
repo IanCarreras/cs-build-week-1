@@ -22,10 +22,10 @@ const Grid = ({grid, cellSize, rows, cols, updateCells, running}) => {
                             row.map((col, j) => {
                                 return <Cell 
                                     key={`${i}-${j}`}
-                                    value={grid[i][j]}
+                                    value={grid}
                                     updateCells={updateCells}
-                                    x={j}
-                                    y={i}
+                                    x={i}
+                                    y={j}
                                     running={running}
                                 />
                             })

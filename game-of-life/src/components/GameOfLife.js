@@ -34,7 +34,7 @@ const GameOfLife = () => {
         return neighbors
     }
 
-    const updateCells = (x, y, status) => {
+    const updateCells = (x, y) => {
         console.log(`x: ${x}, y: ${y}`)
         console.log(grid[x][y])
         const newGrid = grid.map((row, i) => {
@@ -51,10 +51,8 @@ const GameOfLife = () => {
                 return row
             }
         })
-        // let temp = grid
-        // temp[y][x] = status
-        setCells(() => newGrid)
-        console.log(cells)
+        console.log(newGrid)
+        setGrid(() => newGrid)
     }
 
     const createGrid = () => {
@@ -79,7 +77,7 @@ const GameOfLife = () => {
             setRunning(true)
             for (let i=0; i<rows; i++){
                 for (let j=0; j<cols; j++){
-                    let neighbors = calculateNeighbors(cells, i, j, 0)
+                    let neighbors = calculateNeighbors(cells, i, j)
                     if (neighbors < 2 || neighbors > 3){
                         cells[i][j] = 0 
                     } else if (cells[i][j] === 0 && neighbors === 3){
@@ -94,9 +92,8 @@ const GameOfLife = () => {
     }
     
     useEffect(() => {
-        createGrid()
-        console.log('use effect: ', cells)
-    }, [cells])
+        console.log('use effect: ', grid)
+    }, [grid])
 
     return <div>
         <Grid 
