@@ -8,12 +8,12 @@ class GameOfLife extends Component {
         this.size = 20
         this.rows = 15
         this.cols = 15
-        // this.grid = this.makeEmptyGrid()
         this.state = {
+            generation: 0,
             grid: this.makeEmptyGrid(),
             cells: [],
             running: false,
-            interval: 500,
+            interval: 50,
             possibleNeighbors: [
                 [0,1],
                 [0,-1],
@@ -76,36 +76,25 @@ class GameOfLife extends Component {
     }
 
     runGeneration(){
-        console.log('\n')
-        console.log('grid: ', this.state.grid)
+        this.setState({ generation: this.state.generation + 1 })
         let newGrid = this.makeEmptyGrid()
         for (let y = 0; y < this.rows; y++){
             for (let x = 0; x < this.cols; x++){
                 let neighbors = this.calculateNeighbors(this.state.grid, x, y)
-                console.log(`grid[x][y]: ${this.state.grid[x][y]}`)
-                console.log('neighbors: ', neighbors)
                 if (this.state.grid[x][y] === 1){
                     if (neighbors === 2 || neighbors === 3){
-                        console.log('grid: ', this.state.grid)
                         newGrid[x][y] = 1
-                        console.log('newGrid: ', newGrid)
                     } else {
-                        console.log('grid: ', this.state.grid)
                         newGrid[x][y] = 0
-                        console.log('newGrid: ', newGrid)
                     }
                 } else {
                     if (this.state.grid[x][y] === 0 && neighbors === 3){
-                        console.log('grid: ', this.state.grid)
                         newGrid[x][y] = 1
-                        console.log('newGrid: ', newGrid)
                     }
                 }
             }
         }
-        console.log('newGrid: ', newGrid)
         this.setState({ grid: newGrid })
-        console.log('grid: ', this.state.grid)
         this.timeoutHandler = window.setTimeout(() => {
             this.runGeneration()
         }, this.state.interval)
@@ -113,8 +102,6 @@ class GameOfLife extends Component {
 
     calculateNeighbors(board, x, y) {
         let neighbors = 0
-        console.log('\n')
-        console.log(`board[${x}][${y}]: ${board[x][y]}`)
         this.state.possibleNeighbors.forEach(dir => {
             const nX = dir[0] + x
             const nY = dir[1] + y
@@ -122,7 +109,6 @@ class GameOfLife extends Component {
                 neighbors ++
             }
         })
-        console.log('neighbors: ', neighbors)
         return neighbors
     }
 
@@ -136,16 +122,17 @@ class GameOfLife extends Component {
     }
 
     render(){
-        const { interval, running } = this.state
+        const { interval, running, grid } = this.state
         return (
             <div>
+                <h3>Generation: {this.state.generation}</h3>
                 <Grid 
-                    grid={this.state.grid}
+                    grid={grid}
                     cellSize={this.size}
                     rows={this.rows}
                     cols={this.cols}
                     makeCells={this.makeCells}
-                    running={this.state.running}
+                    running={running}
                 />
                 <div className='controls'>
                     {this.state.running ?
