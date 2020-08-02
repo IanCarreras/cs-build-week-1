@@ -147,16 +147,20 @@ class GameOfLife extends Component {
                     running={running}
                 />
                 <div className='controls'>
-                    Speed <input disabled={running ? true : false} value={interval} onChange={this.handleIntervalChange} />
-                    {this.state.running ?
-                        <button onClick={() => this.stopGame()}>Stop</button> :
-                        <button onClick={() => this.startGame()}>Start</button>
-                    }
-                    <button disabled={running ? true : false} onClick={() => this.handleClear()}>Clear</button>
+                    <div>
+                        Speed <input disabled={running ? true : false} value={interval} onChange={this.handleIntervalChange} />
+                        {this.state.running ?
+                            <button onClick={() => this.stopGame()}>Stop</button> :
+                            <button onClick={() => this.startGame()}>Start</button>
+                        }
+                        <button disabled={running ? true : false} onClick={() => this.handleClear()}>Clear</button>
+                    </div>
                     <br/>
-                    Rows <input disabled={running ? true : false} name='rows' placeholder={this.rows} onChange={this.handleSize} />
-                    Cols <input disabled={running ? true : false} name='cols' placeholder={this.cols} onChange={this.handleSize} />
-                    <button disabled={running ? true : false} onClick={() => this.changeSize()}>New Grid</button>
+                    <div>
+                        Rows <input disabled={running ? true : false} name='rows' placeholder={this.rows} onChange={this.handleSize} />
+                        Cols <input disabled={running ? true : false} name='cols' placeholder={this.cols} onChange={this.handleSize} />
+                        <button disabled={running ? true : false} onClick={() => this.changeSize()}>New Grid</button>
+                    </div>
                     <br/>
                     <button disabled={running ? true : false} onClick={() => this.runGeneration()}>Next Generation</button>
                 </div>
