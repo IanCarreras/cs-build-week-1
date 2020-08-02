@@ -6,14 +6,14 @@ class GameOfLife extends Component {
     constructor(){
         super()
         this.size = 20
-        this.rows = 5
-        this.cols = 5
+        this.rows = 15
+        this.cols = 15
         // this.grid = this.makeEmptyGrid()
         this.state = {
             grid: this.makeEmptyGrid(),
             cells: [],
             running: false,
-            interval: 100,
+            interval: 500,
             possibleNeighbors: [
                 [0,1],
                 [0,-1],
@@ -34,22 +34,6 @@ class GameOfLife extends Component {
         this.calculateNeighbors = this.calculateNeighbors.bind(this)
     }
 
-    // state = {
-    //     cells: [],
-    //     running: false,
-    //     interval: 100,
-    //     possibleNeighbors: [
-    //         [0,1],
-    //         [0,-1],
-    //         [1,0],
-    //         [1,1],
-    //         [1,-1],
-    //         [-1,0],
-    //         [-1,1],
-    //         [-1,-1]
-    //     ] 
-    // }
-
     makeEmptyGrid(){
         let grid = []
         for (let y = 0; y < this.rows; y++){
@@ -62,7 +46,6 @@ class GameOfLife extends Component {
     }
 
     makeCells(x, y){
-        console.log(this.state.grid)
         let cells = this.state.grid.map((row, i) => {
             if (i === x){
                 return row.map((col, j) => {
@@ -80,9 +63,7 @@ class GameOfLife extends Component {
     }
 
     startGame = () => {
-        console.log(this.state.running)
         this.setState({ running: true})
-        console.log(this.state.running)
         this.runGeneration()
     }
 
@@ -95,25 +76,36 @@ class GameOfLife extends Component {
     }
 
     runGeneration(){
+        console.log('\n')
+        console.log('grid: ', this.state.grid)
         let newGrid = this.makeEmptyGrid()
         for (let y = 0; y < this.rows; y++){
             for (let x = 0; x < this.cols; x++){
                 let neighbors = this.calculateNeighbors(this.state.grid, x, y)
-                if (this.state.grid[y][x]){
+                console.log(`grid[x][y]: ${this.state.grid[x][y]}`)
+                console.log('neighbors: ', neighbors)
+                if (this.state.grid[x][y] === 1){
                     if (neighbors === 2 || neighbors === 3){
-                        newGrid[y][x] = 1
+                        console.log('grid: ', this.state.grid)
+                        newGrid[x][y] = 1
+                        console.log('newGrid: ', newGrid)
                     } else {
-                        newGrid[y][x] = 0
+                        console.log('grid: ', this.state.grid)
+                        newGrid[x][y] = 0
+                        console.log('newGrid: ', newGrid)
                     }
                 } else {
-                    if (!this.state.grid[y][x] && neighbors === 3){
-                        newGrid[y][x] = 1
+                    if (this.state.grid[x][y] === 0 && neighbors === 3){
+                        console.log('grid: ', this.state.grid)
+                        newGrid[x][y] = 1
+                        console.log('newGrid: ', newGrid)
                     }
                 }
             }
         }
+        console.log('newGrid: ', newGrid)
         this.setState({ grid: newGrid })
-        this.setState({ cells: this.makeCells() })
+        console.log('grid: ', this.state.grid)
         this.timeoutHandler = window.setTimeout(() => {
             this.runGeneration()
         }, this.state.interval)
@@ -121,6 +113,8 @@ class GameOfLife extends Component {
 
     calculateNeighbors(board, x, y) {
         let neighbors = 0
+        console.log('\n')
+        console.log(`board[${x}][${y}]: ${board[x][y]}`)
         this.state.possibleNeighbors.forEach(dir => {
             const nX = dir[0] + x
             const nY = dir[1] + y
@@ -128,7 +122,8 @@ class GameOfLife extends Component {
                 neighbors ++
             }
         })
-        this.setState({ neighbors}) 
+        console.log('neighbors: ', neighbors)
+        return neighbors
     }
 
     handleIntervalChange = (e) => {
