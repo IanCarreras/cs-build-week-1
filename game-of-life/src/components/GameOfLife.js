@@ -32,6 +32,8 @@ class GameOfLife extends Component {
         this.stopGame = this.stopGame.bind(this)
         this.runGeneration = this.runGeneration.bind(this)
         this.calculateNeighbors = this.calculateNeighbors.bind(this)
+        this.handleClear = this.handleClear.bind(this)
+        this.handleIntervalChange = this.handleIntervalChange.bind(this)
     }
 
     makeEmptyGrid(){
@@ -64,7 +66,7 @@ class GameOfLife extends Component {
 
     startGame = () => {
         this.setState({ running: true})
-        this.runGeneration()
+        this.runGeneration(true)
     }
 
     stopGame = () => {
@@ -75,7 +77,7 @@ class GameOfLife extends Component {
         }
     }
 
-    runGeneration(){
+    runGeneration(auto = false){
         this.setState({ generation: this.state.generation + 1 })
         let newGrid = this.makeEmptyGrid()
         for (let y = 0; y < this.rows; y++){
@@ -95,9 +97,11 @@ class GameOfLife extends Component {
             }
         }
         this.setState({ grid: newGrid })
-        this.timeoutHandler = window.setTimeout(() => {
-            this.runGeneration()
-        }, this.state.interval)
+        if (auto) {
+            this.timeoutHandler = window.setTimeout(() => {
+                this.runGeneration(true)
+            }, this.state.interval)
+        }
     }
 
     calculateNeighbors(board, x, y) {
@@ -114,6 +118,14 @@ class GameOfLife extends Component {
 
     handleIntervalChange = (e) => {
         this.setState({ interval: e.target.value })
+    }
+
+    handleSize = (e) => {
+        this[e.target.name] = e.target.value
+    }
+    
+    changeSize = () => {
+        this.setState({ grid: this.makeEmptyGrid()})
     }
 
     handleClear = () => {
@@ -135,10 +147,18 @@ class GameOfLife extends Component {
                     running={running}
                 />
                 <div className='controls'>
+                    Speed <input value={interval} onChange={this.handleIntervalChange} />
                     {this.state.running ?
                         <button onClick={() => this.stopGame()}>Stop</button> :
                         <button onClick={() => this.startGame()}>Start</button>
                     }
+                    <button disabled={running ? true : false} onClick={() => this.handleClear()}>Clear</button>
+                    <br/>
+                    Rows <input name='rows' placeholder={this.rows} onChange={this.handleSize} />
+                    Cols <input name='cols' placeholder={this.cols} onChange={this.handleSize} />
+                    <button onClick={() => this.changeSize()}>New Grid</button>
+                    <br/>
+                    <button onClick={() => this.runGeneration()}>Next Generation</button>
                 </div>
             </div>
 
