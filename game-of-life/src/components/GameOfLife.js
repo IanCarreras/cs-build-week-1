@@ -6,8 +6,8 @@ class GameOfLife extends Component {
     constructor(){
         super()
         this.size = 20
-        this.rows = 15
-        this.cols = 15
+        this.rows = 25
+        this.cols = 25
         this.state = {
             generation: 0,
             grid: this.makeEmptyGrid(),
@@ -147,18 +147,18 @@ class GameOfLife extends Component {
                     running={running}
                 />
                 <div className='controls'>
-                    Speed <input value={interval} onChange={this.handleIntervalChange} />
+                    Speed <input disabled={running ? true : false} value={interval} onChange={this.handleIntervalChange} />
                     {this.state.running ?
                         <button onClick={() => this.stopGame()}>Stop</button> :
                         <button onClick={() => this.startGame()}>Start</button>
                     }
                     <button disabled={running ? true : false} onClick={() => this.handleClear()}>Clear</button>
                     <br/>
-                    Rows <input name='rows' placeholder={this.rows} onChange={this.handleSize} />
-                    Cols <input name='cols' placeholder={this.cols} onChange={this.handleSize} />
-                    <button onClick={() => this.changeSize()}>New Grid</button>
+                    Rows <input disabled={running ? true : false} name='rows' placeholder={this.rows} onChange={this.handleSize} />
+                    Cols <input disabled={running ? true : false} name='cols' placeholder={this.cols} onChange={this.handleSize} />
+                    <button disabled={running ? true : false} onClick={() => this.changeSize()}>New Grid</button>
                     <br/>
-                    <button onClick={() => this.runGeneration()}>Next Generation</button>
+                    <button disabled={running ? true : false} onClick={() => this.runGeneration()}>Next Generation</button>
                 </div>
             </div>
 
