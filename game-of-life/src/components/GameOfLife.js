@@ -1,43 +1,72 @@
-import React, { useState, useEffect } from 'react'
+import React, { Component } from 'react'
 import Grid from './Grid'
 import './GameOfLife.css'
 
-const GameOfLife = () => {
-    const [size, setSize] = useState(20)
-    const [rows, setRows] = useState(5)
-    const [cols, setCols] = useState(5)
-    const [running, setRunning] = useState(false)
-    const [generation, setGeneration] = useState(0)
-    const [run, setRun] = useState(false)
-    const possibleNeighbors = [
-        [0,1],
-        [0,-1],
-        [1,0],
-        [1,1],
-        [1,-1],
-        [-1,0],
-        [-1,1],
-        [-1,-1]
-    ] 
+class GameOfLife extends Component {
+    constructor(){
+        super()
+        this.size = 20
+        this.rows = 5
+        this.cols = 5
+        // this.grid = this.makeEmptyGrid()
+        this.state = {
+            grid: this.makeEmptyGrid(),
+            cells: [],
+            running: false,
+            interval: 100,
+            possibleNeighbors: [
+                [0,1],
+                [0,-1],
+                [1,0],
+                [1,1],
+                [1,-1],
+                [-1,0],
+                [-1,1],
+                [-1,-1]
+            ] 
+        }
 
-    const createGrid = () => {
-        const board = []
-        for (let i = 0; i < rows; i++) {
-            board[i] = []
-            for (let j = 0; j < cols; j++) {
-                board[i][j] = 0
+        this.makeEmptyGrid = this.makeEmptyGrid.bind(this)
+        this.makeCells = this.makeCells.bind(this)
+        this.startGame = this.startGame.bind(this)
+        this.stopGame = this.stopGame.bind(this)
+        this.runGeneration = this.runGeneration.bind(this)
+        this.calculateNeighbors = this.calculateNeighbors.bind(this)
+    }
+
+    // state = {
+    //     cells: [],
+    //     running: false,
+    //     interval: 100,
+    //     possibleNeighbors: [
+    //         [0,1],
+    //         [0,-1],
+    //         [1,0],
+    //         [1,1],
+    //         [1,-1],
+    //         [-1,0],
+    //         [-1,1],
+    //         [-1,-1]
+    //     ] 
+    // }
+
+    makeEmptyGrid(){
+        let grid = []
+        for (let y = 0; y < this.rows; y++){
+            grid[y] = []
+            for (let x = 0; x < this.cols; x++){
+                grid[y][x] = 0
             }
         }
-        return board
+        return grid
     }
-    
-    const [grid, setGrid] = useState(createGrid())
-    
-    const updateCells = (x, y) => {
-        const newGrid = grid.map((row, i) => {
-            if (i === x) {
+
+    makeCells(x, y){
+        console.log(this.state.grid)
+        let cells = this.state.grid.map((row, i) => {
+            if (i === x){
                 return row.map((col, j) => {
-                    if (j === y) {
+                    if (j === y){
                         return col === 0 ? 1 : 0
                     } else {
                         return col
@@ -47,86 +76,92 @@ const GameOfLife = () => {
                 return row
             }
         })
-        setGrid(() => newGrid)
-    }
-    const calculateNeighbors = (board, x, y) => {
-        let neighbors = 0
-        possibleNeighbors.forEach(dir => {
-            const nX = dir[0] + x
-            const nY = dir[1] + y
-            if (nX >= 0 && nX < cols && nY >=0 && nY < rows && board[nX][nY]) {
-                neighbors ++
-            }
-        })
-        return neighbors
+        this.setState({ grid: cells }) 
     }
 
-    const toggleRunning = () => {
-        if (running){
-            setRunning(false)
-            setRun(false)
-        } else {
-            setRunning(true)
-            runSimulation()
+    startGame = () => {
+        console.log(this.state.running)
+        this.setState({ running: true})
+        console.log(this.state.running)
+        this.runGeneration()
+    }
+
+    stopGame = () => {
+        this.setState({ running: false})
+        if (this.timeoutHandler){
+            window.clearTimeout(this.timeoutHandler)
+            this.timeoutHandler = null
         }
     }
-    
-    useEffect(() => {
-        let run = true
 
-        const changeRun = () => {
-            if (run){
-                run = false
-            } else {
-                run = true
-            }
-        }
-        
-        setRun(changeRun)
-
-        if (run){
-            const runSimulation = () => {
-            const tempGrid = createGrid()
-            for (let i=0; i<rows; i++){
-                for (let j=0; j<cols; j++){
-                    let neighbors = calculateNeighbors(grid, i, j)
-                    if (neighbors < 2 || neighbors > 3){
-                        tempGrid[i][j] = 0 
-                    } else if (grid[i][j] === 0 && neighbors === 3){
-                        tempGrid[i][j] = 1
-                    } else if (grid[i][j] === 1 && neighbors === 3 || grid[i][j] === 1 && neighbors === 2){
-                        tempGrid[i][j] = 1
+    runGeneration(){
+        let newGrid = this.makeEmptyGrid()
+        for (let y = 0; y < this.rows; y++){
+            for (let x = 0; x < this.cols; x++){
+                let neighbors = this.calculateNeighbors(this.state.grid, x, y)
+                if (this.state.grid[y][x]){
+                    if (neighbors === 2 || neighbors === 3){
+                        newGrid[y][x] = 1
+                    } else {
+                        newGrid[y][x] = 0
+                    }
+                } else {
+                    if (!this.state.grid[y][x] && neighbors === 3){
+                        newGrid[y][x] = 1
                     }
                 }
             }
-            setGrid(tempGrid)
-            console.log(running)
-            if (running){
-                setTimeout(() => {
-                    runSimulation()
-                }, 1000)
-            }
         }
+        this.setState({ grid: newGrid })
+        this.setState({ cells: this.makeCells() })
+        this.timeoutHandler = window.setTimeout(() => {
+            this.runGeneration()
+        }, this.state.interval)
     }
-}, [running])
 
-    useEffect(() => {
-        console.log('use effect: ', grid)
-    }, [grid])
+    calculateNeighbors(board, x, y) {
+        let neighbors = 0
+        this.state.possibleNeighbors.forEach(dir => {
+            const nX = dir[0] + x
+            const nY = dir[1] + y
+            if (nX >= 0 && nX < this.cols && nY >=0 && nY < this.rows && board[nX][nY]) {
+                neighbors ++
+            }
+        })
+        this.setState({ neighbors}) 
+    }
 
-    return <div>
-        <Grid 
-            grid={grid}
-            cellSize={size}
-            rows={rows}
-            cols={cols}
-            updateCells={updateCells}
-            running={running}
-        />
-        <div className='controls'>
-            <button onClick={() => toggleRunning()}>{running ? 'stop' : 'start'}</button>
-        </div>
-    </div>
+    handleIntervalChange = (e) => {
+        this.setState({ interval: e.target.value })
+    }
+
+    handleClear = () => {
+        this.state.grid = this.makeEmptyGrid()
+        this.setState({ cells: this.makeCells() })
+    }
+
+    render(){
+        const { interval, running } = this.state
+        return (
+            <div>
+                <Grid 
+                    grid={this.state.grid}
+                    cellSize={this.size}
+                    rows={this.rows}
+                    cols={this.cols}
+                    makeCells={this.makeCells}
+                    running={this.state.running}
+                />
+                <div className='controls'>
+                    {this.state.running ?
+                        <button onClick={() => this.stopGame()}>Stop</button> :
+                        <button onClick={() => this.startGame()}>Start</button>
+                    }
+                </div>
+            </div>
+
+        ) 
+    } 
 }
 
 

@@ -2,7 +2,7 @@ import React from 'react'
 import Cell from './Cell'
 import './Grid.css'
 
-const Grid = ({grid, cellSize, rows, cols, updateCells, running}) => {
+const Grid = ({grid, cellSize, cols, makeCells, running}) => {
     const width = cols*cellSize
     const styleObj = {
         width: width, 
@@ -22,7 +22,7 @@ const Grid = ({grid, cellSize, rows, cols, updateCells, running}) => {
                                 return <Cell 
                                     key={`${i}-${j}`}
                                     value={grid}
-                                    updateCells={updateCells}
+                                    makeCells={makeCells}
                                     x={i}
                                     y={j}
                                     running={running}
